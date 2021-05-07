@@ -97,6 +97,10 @@
         <li><label>Python进阶</label></li>
 
           
+            <li><a title="数据结构-堆" href="16203949108365.html">数据结构-堆</a></li>
+          
+            <li><a title="python中嵌套列表可能会遇到的坑" href="16203949108527.html">python中嵌套列表可能会遇到的坑</a></li>
+          
             <li><a title="列表生成式" href="16196181446355.html">列表生成式</a></li>
           
             <li><a title="网络编程" href="16196181446446.html">网络编程</a></li>
@@ -164,6 +168,10 @@
                     
                       <li class="side-title"><span>Python进阶</span></li>
                         
+                          <li><a title="数据结构-堆" href="16203949108365.html">数据结构-堆</a></li>
+                        
+                          <li><a title="python中嵌套列表可能会遇到的坑" href="16203949108527.html">python中嵌套列表可能会遇到的坑</a></li>
+                        
                           <li><a title="列表生成式" href="16196181446355.html">列表生成式</a></li>
                         
                           <li><a title="网络编程" href="16196181446446.html">网络编程</a></li>
@@ -184,68 +192,172 @@
 
 	
 		<div class="markdown-body">
-		<h1>pip安装时报错问题记录</h1>
+		<h1>python中import的用法</h1>
 
-		<p><a href="https://blog.csdn.net/e15273/article/details/79649876?utm_medium=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromBaidu-1.control&amp;depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromBaidu-1.control">https://blog.csdn.net/e15273/article/details/79649876?utm_medium=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromBaidu-1.control&amp;depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromBaidu-1.control</a></p>
+		<h2 id="toc_0">import语句的作用</h2>
 
-<p>1、解决安装时报read time out的问题</p>
+<p>import语句用来导入其他python文件（专业术语：模块module），使用该模块里定义的类(class)、方法(def)、变量，从而达到复用代码的目的。</p>
 
-<p><strong>国内源：</strong></p>
+<p>下面基于python3来总结下import语句的几种用法</p>
 
-<p>新版ubuntu要求使用https源，要注意。</p>
+<h2 id="toc_1">导入的写法</h2>
 
-<p>清华：<a href="https://pypi.tuna.tsinghua.edu.cn/simple">https://pypi.tuna.tsinghua.edu.cn/simple</a></p>
+<h3 id="toc_2">1.<code>import module_name</code></h3>
 
-<p>阿里云：<a href="http://mirrors.aliyun.com/pypi/simple/">http://mirrors.aliyun.com/pypi/simple/</a></p>
+<p>这种写法只能导入package或module,并且使用内部函数或者类的时侯也要加上package或module name的前缀。<br/>
+import后直接接模块名。这种情况下，python会在两个地方寻找这个模块</p>
 
-<p>中国科技大学 <a href="https://pypi.mirrors.ustc.edu.cn/simple/">https://pypi.mirrors.ustc.edu.cn/simple/</a></p>
+<ol>
+<li>sys.path（通过运行代码<code>import sys; print(sys.path)</code>查看）下，内置模块和自行安装工具包（例如pip安装）的目录一般就在sys.path中，所以这类库可以直接import;</li>
+<li>运行文件所在目录的文件，例如a.py和b.py文件都在test目录目录下，示例如下：</li>
+</ol>
 
-<p>华中理工大学：<a href="http://pypi.hustunique.com/">http://pypi.hustunique.com/</a></p>
+<pre><code class="language-text">test/
+    a.py
+    b.py
+</code></pre>
 
-<p>山东理工大学：<a href="http://pypi.sdutlinux.org/">http://pypi.sdutlinux.org/</a></p>
+<pre><code class="language-text"># a.py
+import os
+import b
+b.printSelf()
+</code></pre>
 
-<p>豆瓣：<a href="http://pypi.douban.com/simple/">http://pypi.douban.com/simple/</a></p>
+<pre><code class="language-text"># b.py
+def printSelf():
+    print(&#39;In b&#39;)
+</code></pre>
 
-<p>亲测过清华源</p>
+<p>此时在test目录下，运行<code>python a.py</code>命令，正常运行且打印出<code>In b</code>，说明上述写法没问题。<br/>
+<strong>实战分析</strong><br/>
+之前用pip3安装了appium后，<code>import appium</code>时报<code>No module name appium</code>，是由于安装的路径在<code>/Library/Python/3.7/site-packages</code>下，而这个路径没有在sys.path中，所以在其他路径下执行py文件会报错，而在<code>/Library/Python/3.7/site-packages</code>路径下直接import appium才不报错，是因为python运行文件所在目录的文件。<br/>
+<strong>解决办法</strong></p>
 
-<p><strong>pypi 镜像使用帮助</strong></p>
+<ul>
+<li>使用python -m（后面分析）
+<code>python3 -m pip install some-package</code></li>
+</ul>
 
-<p>pypi 镜像每 5 分钟同步一次。</p>
+<ul>
+<li>【简单粗暴法】由上面学到的知识可以得出一个方法，将第三方库的安装路径加在sys.path下</li>
+</ul>
 
-<p><strong>临时使用</strong></p>
+<pre><code class="language-text">//将这段代码加到python文件最上方
+import sys
+sys.path.append(r&#39;实际路径&#39;)
+</code></pre>
 
-<p>pip install -i <a href="https://pypi.tuna.tsinghua.edu.cn/simple">https://pypi.tuna.tsinghua.edu.cn/simple</a> some-package</p>
+<p>用上述方法导入原有的sys.path中的库没有问题。但是，最好不要用上述方法导入同目录下的文件！因为这<strong>可能会出错</strong>。演示这个错误需要用到import语句的第二种写法，所以先来学一学import的第二种写法。</p>
 
-<p>注意，simple 不能少, 是 https 而不是 http</p>
+<h3 id="toc_3">2.<code>from package_name import module_name</code></h3>
 
-<p><strong>设为默认</strong></p>
+<p>在test目录下新建目录step，在step中新建文件c.py</p>
 
-<p>升级 pip 到最新的版本 (&gt;=10.0.0) 后进行配置：</p>
+<pre><code class="language-text">test/
+    step/
+        c.py
+    a.py
+    b.py
+</code></pre>
 
-<p>pip install pip -U pip config set global.index-url <a href="https://pypi.tuna.tsinghua.edu.cn/simple">https://pypi.tuna.tsinghua.edu.cn/simple</a></p>
+<pre><code class="language-text"># c.py
+def printSelf():
+    print(&#39;In c&#39;)
+</code></pre>
 
-<p>如果您到 pip 默认源的网络连接较差，临时使用本镜像站来升级 pip：</p>
+<p>a中怎样引入c.py模块呢</p>
 
-<p>pip install -i <a href="https://pypi.tuna.tsinghua.edu.cn/simple">https://pypi.tuna.tsinghua.edu.cn/simple</a> pip -U</p>
+<pre><code class="language-text"># a.py
+from step import c
 
-<p>2、socket.timeout:The read operation timed out问题</p>
+c.printSelf()
+</code></pre>
 
-<p>一般是由于网速不稳定，下载过慢，超出默认时间，所以只要修改一下响应时间就好了。</p>
+<p>It&#39;s Ok!<br/>
+如果用第一种写法导入同目录下的文件有可能会产生问题，下面用一个例子来说明：</p>
 
-<p>方法如下:</p>
+<p>在step目录下新建文件d.py</p>
 
-<p>windows下输入 pip --default-timeout=100 install 包名</p>
+<pre><code class="language-text">test/
+    step/
+        c.py
+        d.py
+    a.py
+    b.py
+</code></pre>
 
-<p>linux下输入 pip --default-timeout=100 install -U 包名</p>
+<pre><code class="language-text"># d.py
+def printSelf():
+    print(&#39;In d&#39;)
+</code></pre>
 
-<p>例如我安装playwright使用命令</p>
+<p>c.py修改一下，文件中直接导入d</p>
 
-<p>pip --default-timeout=100 install -i <a href="https://pypi.tuna.tsinghua.edu.cn/simple">https://pypi.tuna.tsinghua.edu.cn/simple</a> playwright</p>
+<pre><code class="language-text"># c.py
+import d
+def printSelf():
+    print(&#39;In c&#39;)
+</code></pre>
 
-<p>成功下载！</p>
+<p>再运行a.py时，会报d模块不存在。分析下报错原因，a里面<code>from step import c</code>导入c，然后在c.py中<code>import d</code>导入d模块，a.py与d.py在不同目录下，所以c导入d时报错。<br/>
+而上面的错误在python2中就不会报错，这里就涉及到import的核心知识点相对导入和绝对导入，<strong>上面两种写法在python2是相对导入，而在python3中是绝对导入。</strong></p>
+
+<h2 id="toc_4">绝对导入和相对导入</h2>
+
+<p>绝对导入和相对导入的关键区别在于，绝对导入能直接import运行文件所在目录下的包或模块。在python3下是绝对导入，基于这一点，导入自己写的文件，如果是非运行入口文件，则需要相对导入。如上述的c.py是非运行入口文件，而a.py是运行入口文件，可以使用绝对导入。</p>
+
+<pre><code class="language-text">#c.py
+from . import d
+def printSelf():
+    print(&#39;In c&#39;)
+</code></pre>
+
+<p>这样再运行a.py就没毛病了<br/>
+列举一下相对导入的写法：</p>
+
+<pre><code class="language-text">from . import module_name。导入和自己同目录下的模块。
+from .package_name import module_name。导入和自己同目录的包的模块。
+from .. import module_name。导入上级目录的模块。
+from ..package_name import module_name。导入位于上级目录下的包的模块。
+</code></pre>
+
+<p>当然还可以有更多的.，每多一个点就多往上一层目录。<br/>
+上面说到“运行入口文件，可以使用绝对导入”，那我偏不，就要用相对导入，可不可以呢，比如写成下面这样：</p>
+
+<pre><code class="language-text">#a.py
+from .step import c
+c.printSelf()
+</code></pre>
+
+<p>可以是可以，但。。不能用<code>python a.py</code>命令，而需要<code>python -m test.a</code><br/>
+python -m中-m指令是为了让Python预先import你要的package或module给你，然后再执行script。</p>
+
+<h2 id="toc_5">import的其他常用方法</h2>
+
+<h3 id="toc_6">1. import moudle_name as alias。</h3>
+
+<p>有些module_name比较长，之后写它时较为麻烦，或者module_name会出现名字冲突，可以用as来给它改名，如import numpy as np。</p>
+
+<h3 id="toc_7">2. from module_name import function_name, variable_name, class_name。</h3>
+
+<p>上面导入的都是整个模块，有时候我们只想使用模块中的某些函数、某些变量、某些类，用这种写法就可以了。使用逗号可以导入模块中的多个元素。<br/>
+有时候导入的元素很多，可以使用反斜杠来换行，官方推荐使用括号。</p>
+
+<h3 id="toc_8">3. from Tkinter import Tk, Frame, Button, Entry, Canvas, Text, \</h3>
+
+<pre><code class="language-text">    LEFT, DISABLED, NORMAL, RIDGE, END  # 反斜杠换行
+from Tkinter import (Tk, Frame, Button, Entry, Canvas, Text,
+    LEFT, DISABLED, NORMAL, RIDGE, END) # 括号换行（推荐）
+</code></pre>
 
 
 		</div>
+	
+
+ 
+	
+
+ 
 	
 
  
